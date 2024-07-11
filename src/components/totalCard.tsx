@@ -1,6 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, UIManager, LayoutAnimation } from 'react-native';
 import { locale } from '../en';
+
+if ( UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+const layoutAnimConfig = {
+  duration: 500,
+  create: {
+    duration: 500,
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.scaleY,
+    springDamping: 0.5,
+  }
+};
 
 type TotalCardProps = {
     sumCurrentValue: number;
@@ -15,32 +28,53 @@ const TotalCard: React.FC<TotalCardProps> = ({
     sumTodayProfitLoss,
     sumProfitLoss
 }) => {
-    return <>
-      <View style={styles.cardBody}>
-        <View style={styles.flexRow}>
-            <Text style={styles.fontBold}>{locale.CURRENT_VALUE} </Text>
-            <Text style={styles.f12}>₹{sumCurrentValue.toFixed(2)}</Text>
-        </View>
-        <View style={styles.flexRow}>
-            <Text style={styles.fontBold}>{locale.TOTAL_INVESTMENT} </Text>
-            <Text style={styles.f12}>₹{sumInvestmentValue.toFixed(2)}</Text>
-        </View>
-        <View style={styles.flexRow}>
-            <Text style={styles.fontBold}>{locale.TODAY_PROFIT_LOSS} </Text>
-            <Text style={styles.f12}>₹{sumTodayProfitLoss.toFixed(2)}</Text>
-        </View>
-        <View style={styles.flexRow}>
-            <Text style={styles.fontBold}>{locale.PROFIT_LOSS} </Text>
-            <Text style={styles.f12}>₹{sumProfitLoss.toFixed(2)}</Text>
-        </View>
+    const [collapsed, setCollapsed] = useState(false);
 
-      </View>
-    </>
-}
+    const toggleCollapse = () => {
+      LayoutAnimation.configureNext(layoutAnimConfig);
+        setCollapsed(!collapsed);
+    };
 
-export default TotalCard
+    return (
+        <View style={styles.position}> 
+            <TouchableOpacity onPress={toggleCollapse}>
+                <View style={styles.title}>
+                    <Text style={styles.titleText}>{collapsed ? 'Show Details' : 'Hide Details'}</Text>
+                </View>
+            </TouchableOpacity>
+
+            {!collapsed && (
+                <View style={styles.cardBody}>
+                    <View style={styles.flexRow}>
+                        <Text style={styles.fontBold}>{locale.CURRENT_VALUE} </Text>
+                        <Text style={styles.f12}>₹{sumCurrentValue.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.flexRow}>
+                        <Text style={styles.fontBold}>{locale.TOTAL_INVESTMENT} </Text>
+                        <Text style={styles.f12}>₹{sumInvestmentValue.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.flexRow}>
+                        <Text style={styles.fontBold}>{locale.TODAY_PROFIT_LOSS} </Text>
+                        <Text style={styles.f12}>₹{sumTodayProfitLoss.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.flexRow}>
+                        <Text style={styles.fontBold}>{locale.PROFIT_LOSS} </Text>
+                        <Text style={styles.f12}>₹{sumProfitLoss.toFixed(2)}</Text>
+                    </View>
+                </View>
+            )}
+        </View>
+    );
+};
+
+export default TotalCard;
 
 const styles = StyleSheet.create({
+  position:{
+    position:"absolute",
+    bottom:0,
+    width:"100%"
+  },
   f12:{
     fontSize:12,
     color:"black",
@@ -60,6 +94,7 @@ const styles = StyleSheet.create({
     alignItems:"center"
   },
   title:{
+   
     padding:10,
     backgroundColor:"#5d268e",
   },
@@ -70,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
   },
   listContainer: {
-    height: '75%',
+
   },
   cardBody: {
     paddingHorizontal:10,

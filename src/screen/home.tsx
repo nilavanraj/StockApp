@@ -62,9 +62,10 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: 'grey',
+    height:"100%"
   },
   listContainer: {
-    height: '75%',
+    height:"90%"
   },
 });
 
